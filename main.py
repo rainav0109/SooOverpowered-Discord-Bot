@@ -4,7 +4,7 @@ import pymongo
 import os
 import asyncio
 from helper import *
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 # Load environmental variables
 try:
@@ -40,8 +40,14 @@ def blacklist_check():
 # Start the bot
 client = commands.Bot(
     command_prefix=get_prefix,
-    owner_id=int(os.environ.get('owner'))
+    owner_id=int(os.environ.get('owner')),
 )
+
+
+# Automatically restarts the bot
+@tasks.loop(hours=12, reconnect=True)
+async def bot_restart():
+    os._exit()
 
 
 # Remove default help command
